@@ -8,7 +8,7 @@ function openPopup(popup) {
   popup.classList.add(modalBasicConfig.animatedPopup); // Добавляем класс для анимации
   setTimeout(() => {
     popup.classList.add(modalBasicConfig.showPopup); // Добавляем класс для видимости
-  }, 10); // Небольшая задержка для начала анимации
+  }, 0); // Небольшая задержка для начала анимации
   document.addEventListener("keydown", closingPopupPressingEsc);
 }
 
@@ -21,8 +21,8 @@ function closePopup(popup) {
   document.removeEventListener("keydown", closingPopupPressingEsc);
 }
 
-// Функция-обработчик события клика по оверлею
-function popupCloseByOverlay(popup) {
+// Функция для инициализации закрытия попапа по клику на оверлей
+function initPopupCloseByOverlay(popup) {
   popup.addEventListener("click", function (e) {
     if (e.target.classList.contains(modalBasicConfig.showPopup)) {
       closePopup(popup);
@@ -40,4 +40,17 @@ function closingPopupPressingEsc(e) {
   }
 }
 
-export { openPopup, closePopup, popupCloseByOverlay, closingPopupPressingEsc };
+// Кнопка для создания карточек «+»
+const addCardButton = document.querySelector(".add-card-button");
+const addCardPopup = document.querySelector(".popup");
+
+if (addCardButton && addCardPopup) {
+  addCardButton.addEventListener("click", () => {
+    openPopup(addCardPopup);
+  });
+
+  // Инициализация закрытия попапа по клику на оверлей
+  initPopupCloseByOverlay(addCardPopup);
+}
+
+export { openPopup, closePopup, initPopupCloseByOverlay, closingPopupPressingEsc };
