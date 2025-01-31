@@ -76,8 +76,8 @@ const editProfileForm = document.querySelector('.popup__form[name="edit-profile"
 const nameInput = editProfileForm.querySelector('.popup__input_type_name');
 const jobInput = editProfileForm.querySelector('.popup__input_type_description');
 
-function handleFormSubmit(evt) {
-  evt.preventDefault();
+function handleFormSubmit(profileFormSubmitEvent) {
+  profileFormSubmitEvent.preventDefault();
 
   // Получите значение полей jobInput и nameInput из свойства value
   const newName = nameInput.value;

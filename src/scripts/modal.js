@@ -40,17 +40,4 @@ function closingPopupPressingEsc(e) {
   }
 }
 
-// Кнопка для создания карточек «+»
-const addCardButton = document.querySelector(".add-card-button");
-const addCardPopup = document.querySelector(".popup");
-
-if (addCardButton && addCardPopup) {
-  addCardButton.addEventListener("click", () => {
-    openPopup(addCardPopup);
-  });
-
-  // Инициализация закрытия попапа по клику на оверлей
-  initPopupCloseByOverlay(addCardPopup);
-}
-
 export { openPopup, closePopup, initPopupCloseByOverlay, closingPopupPressingEsc };
