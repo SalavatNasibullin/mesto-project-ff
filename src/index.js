@@ -1,6 +1,7 @@
 import { openPopup, closePopup, initPopupCloseByOverlay } from "../src/scripts/modal.js";
 import { enableValidation, clearValidation } from "../src/scripts/validation.js";
 import { getUserInfo, getCards, updateProfile, addCard, toggleLike, updateAvatar, deleteCard } from "../src/scripts/api.js";
+import { createCard } from "../src/scripts/card.js";
 import "./pages/index.css";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -146,6 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
+    let userId; 
+
     editProfileForm.addEventListener("submit", (evt) => {
         evt.preventDefault();
         handleFormSubmit(
@@ -166,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
             newCardFormElement,
             popupNewCard,
             (newCard) => {
-                const cardElement = createCard(newCard, openModalWithImage, handleLikeClick);
+                const cardElement = createCard(newCard, openModalWithImage, handleLikeClick, openDeleteCardPopup, userId); // Добавлено openDeleteCardPopup
                 document.querySelector(config.cardList).prepend(cardElement);
             }
         );
@@ -215,38 +218,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 
-    // Рендер карточек
-    function createCard(cardData, handleImageClick, handleLikeClick, userId) {
-        const cardTemplate = document.querySelector("#card-template").content;
-        const cardElement = cardTemplate.cloneNode(true).querySelector(".card");
-        const cardImage = cardElement.querySelector(".card__image");
-        const cardTitle = cardElement.querySelector(".card__title");
-        const likeButton = cardElement.querySelector(".card__like-button");
-        const likeCount = cardElement.querySelector(".card__like-count");
-        const deleteButton = cardElement.querySelector(".card__delete-button");
-
-        cardImage.src = cardData.link;
-        cardImage.alt = cardData.name;
-        cardTitle.textContent = cardData.name;
-        likeCount.textContent = cardData.likes.length;
-
-        // Удаление карточки, если она не принадлежит пользователю
-        if (deleteButton) {
-            if (cardData.owner._id !== userId) {
-                deleteButton.remove();
-            } else {
-                deleteButton.addEventListener("click", () => openDeleteCardPopup(cardData._id, cardElement));
-            }
-        }
-
-        // Обработчик клика на картинку
-        cardImage.addEventListener("click", () => handleImageClick(cardData));
-
-        // Обработчик лайка
-        likeButton.addEventListener("click", () => handleLikeClick(cardData._id, likeButton, likeCount));
-
-        return cardElement;
-    }
 
     function handleLikeClick(cardId, likeButton, likeCountElement) {
         const isLiked = likeButton.classList.contains("card__like-button_is-active");
@@ -267,8 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log("Карточки для рендеринга:", cardsList);
 
-        cardsList.forEach((card) => {
-            const cardElement = createCard(card, openModalWithImage, handleLikeClick, userId);
+         cardsList.forEach((card) => {
+            const cardElement = createCard(card, openModalWithImage, handleLikeClick, openDeleteCardPopup, userId);
             placesList.append(cardElement);
         });
     }
@@ -283,6 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector(config.onPageUserDescription).textContent = userData.about;
             avatarImage.style.backgroundImage = `url(${userData.avatar})`;
             renderCards(cards, userData._id);
+            userId = userData._id; 
         })
         .catch((error) => {
             console.error("Ошибка при загрузке данных:", error);
